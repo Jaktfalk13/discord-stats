@@ -1,72 +1,64 @@
-const Discord = require('discord.js');
-const config = require("./config.json");
-const bot = new Discord.Client({disableEveryone: true});
+const Util = require('./util/Util');
 
-bot.login(config.token);
+module.exports = {
+  // "Root" classes (starting points)
+  Client: require('./client/Client'),
+  Shard: require('./sharding/Shard'),
+  ShardClientUtil: require('./sharding/ShardClientUtil'),
+  ShardingManager: require('./sharding/ShardingManager'),
+  WebhookClient: require('./client/WebhookClient'),
 
-// Log stats-bot in to the server and set status
-bot.on("ready", async () => {
-console.log(`${bot.user.username} has logged on.`)
-bot.user.setActivity('Half Life 3', { type: 'PLAYING' })
-  .then(presence => console.log(`Activity set to ${presence.game ? presence.game.name : 'none'}`))
-  .catch(console.error);
+  // Utilities
+  Collection: require('./util/Collection'),
+  Constants: require('./util/Constants'),
+  DiscordAPIError: require('./client/rest/DiscordAPIError'),
+  EvaluatedPermissions: require('./util/Permissions'),
+  Permissions: require('./util/Permissions'),
+  Snowflake: require('./util/Snowflake'),
+  SnowflakeUtil: require('./util/Snowflake'),
+  Util: Util,
+  util: Util,
+  version: require('../package').version,
 
-// Get our server
-const guild = bot.guilds.get('388093207575134208');
+  // Shortcuts to Util methods
+  escapeMarkdown: Util.escapeMarkdown,
+  fetchRecommendedShards: Util.fetchRecommendedShards,
+  splitMessage: Util.splitMessage,
 
-// Get our stats channels
-const totalUsers = bot.channels.get('470358845751951361');
-const onlineUsers = bot.channels.get('470366354222874665');
-const codeMonkeys = bot.channels.get('470358906225295391');
-
-// Check every 30 seconds for changes
-setInterval(function() {
-  console.log('Getting stats update..')
-
-  //Get actual counts
-  var userCount = guild.memberCount;
-  var onlineCount = guild.members.filter(m => m.presence.status === 'online').size
-  var coderCount = guild.roles.get('388102002695077888').members.size;
-  
-  // Log counts for debugging
-  console.log("Total Users: " + userCount);
-  console.log("Online Users: " + onlineCount);
-  console.log("Coders: " + coderCount);
-
-  // Set channel names
-  totalUsers.setName("Total Users: " + userCount)
-  .then(newChannel => console.log(`Stat channel renamed to: ${newChannel.name}`))
-  .catch(console.error);
-
-  onlineUsers.setName("Online Users: " + onlineCount)
-  .then(newChannel => console.log(`Stat channel renamed to: ${newChannel.name}`))
-  .catch(console.error);
-
-  codeMonkeys.setName("Coders: " + coderCount)
-  .then(newChannel => console.log(`Stat channel renamed to: ${newChannel.name}`))
-  .catch(console.error);
-  }, 30000)
-
-});
-
-bot.on('message', async message => {
-  if(message.author.bot) return;
-
-  let prefix = config.prefix;
-  let messageBody = message.content.split(" ");
-  let command = messageBody[0];
-
-
-  if(command == `${prefix}code`){
-    let repo = new Discord.RichEmbed()
-    .setDescription("Stats Bot Repository")
-    .setColor("#00FF00")
-    .addField("Github", "https://github.com/CodeSpent/discord-stats");
- 
-
-    return message.channel.send(repo);
-  }
-});
-
-
-
+  // Structures
+  Attachment: require('./structures/Attachment'),
+  CategoryChannel: require('./structures/CategoryChannel'),
+  Channel: require('./structures/Channel'),
+  ClientUser: require('./structures/ClientUser'),
+  ClientUserSettings: require('./structures/ClientUserSettings'),
+  Collector: require('./structures/interfaces/Collector'),
+  DMChannel: require('./structures/DMChannel'),
+  Emoji: require('./structures/Emoji'),
+  Game: require('./structures/Presence').Game,
+  GroupDMChannel: require('./structures/GroupDMChannel'),
+  Guild: require('./structures/Guild'),
+  GuildAuditLogs: require('./structures/GuildAuditLogs'),
+  GuildChannel: require('./structures/GuildChannel'),
+  GuildMember: require('./structures/GuildMember'),
+  Invite: require('./structures/Invite'),
+  Message: require('./structures/Message'),
+  MessageAttachment: require('./structures/MessageAttachment'),
+  MessageCollector: require('./structures/MessageCollector'),
+  MessageEmbed: require('./structures/MessageEmbed'),
+  MessageMentions: require('./structures/MessageMentions'),
+  MessageReaction: require('./structures/MessageReaction'),
+  OAuth2Application: require('./structures/OAuth2Application'),
+  ClientOAuth2Application: require('./structures/OAuth2Application'),
+  PartialGuild: require('./structures/PartialGuild'),
+  PartialGuildChannel: require('./structures/PartialGuildChannel'),
+  PermissionOverwrites: require('./structures/PermissionOverwrites'),
+  Presence: require('./structures/Presence').Presence,
+  ReactionEmoji: require('./structures/ReactionEmoji'),
+  ReactionCollector: require('./structures/ReactionCollector'),
+  RichEmbed: require('./structures/RichEmbed'),
+  Role: require('./structures/Role'),
+  TextChannel: require('./structures/TextChannel'),
+  User: require('./structures/User'),
+  VoiceChannel: require('./structures/VoiceChannel'),
+  Webhook: require('./structures/Webhook'),
+};
